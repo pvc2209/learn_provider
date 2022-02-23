@@ -1,3 +1,4 @@
+import 'package:bai3_1_provider/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,71 +9,43 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("rebuild to");
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home Page"),
-        centerTitle: true,
-      ),
-      drawer: SafeArea(
-        child: Drawer(
-          child: Consumer<MySetting>(
-            builder: (context, settings, child) {
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text("Change text"),
-                    onTap: () {
-                      settings.text = "Drawer";
-                    },
-                  ),
-                  ListTile(
-                    title: Text("Change color"),
-                    onTap: () {
-                      settings.changeColor();
-                    },
-                  ),
-                ],
-              );
-            },
+      appBar: AppBar(title: const Text("Flutter MultiProvider"), actions: [
+        Switch(
+          value: context.watch<MySettings>().isDark,
+          onChanged: (value) {
+            context.read<MySettings>().setBrightness(value);
+          },
+        ),
+      ]),
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            context.watch<CounterProvider>().counter.toString(),
+            style: const TextStyle(fontSize: 30),
           ),
-        ),
-      ),
-      body: SafeArea(
-        child: Align(
-          alignment: Alignment.topRight,
-          child: Consumer<MySetting>(builder: (context, settings, child) {
-            print("rebuild nho");
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  settings.text,
-                  style: TextStyle(color: settings.color),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    settings.text = "Hello";
-                  },
-                  child: Text(
-                    "Change text",
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    settings.changeColor();
-                  },
-                  child: Text(
-                    "Change color",
-                  ),
-                ),
-              ],
-            );
-          }),
-        ),
-      ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CounterProvider>().decrement();
+                },
+                child: const Text("Decrement"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CounterProvider>().increment();
+                },
+                child: const Text("Increment"),
+              ),
+            ],
+          )
+        ],
+      )),
     );
   }
 }

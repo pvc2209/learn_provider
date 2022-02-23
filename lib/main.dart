@@ -13,17 +13,34 @@
 // => Với việc dùng context.watch() thì cái hàm gần nhất build chứa cái context đó sẽ bị rebuild lại
 // => Làm giảm hiệu năng => Dùng Consumer để tối ưu
 
+// 3.4: https://youtu.be/m3nUtgmhxHY
+
+import 'package:bai3_1_provider/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'my_settings.dart';
 import 'home_page.dart';
 
+// TODO: hello
+
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: ((context) => MySetting()),
-    child: const MaterialApp(
-      home: HomePage(),
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MySettings(),
+        ),
+        ChangeNotifierProvider(
+          create: ((context) => CounterProvider(0)),
+        ),
+      ],
+      child: Consumer<MySettings>(
+        builder: (context, settings, child) => MaterialApp(
+          theme: settings.isDark ? ThemeData.dark() : ThemeData.light(),
+          home: HomePage(),
+        ),
+      ),
     ),
-  ));
+  );
 }
