@@ -1,61 +1,76 @@
-import 'package:bai3_1_provider/second_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'counter_provider.dart';
+import 'my_settings.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print("rebuild to");
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Home Page"),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              context.watch<CounterProvider>().counter.toString(),
-              style: const TextStyle(fontSize: 40),
-            ),
-            const SizedBox(
-              height: 80,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      drawer: SafeArea(
+        child: Drawer(
+          child: Consumer<MySetting>(
+            builder: (context, settings, child) {
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text("Change text"),
+                    onTap: () {
+                      settings.text = "Drawer";
+                    },
+                  ),
+                  ListTile(
+                    title: Text("Change color"),
+                    onTap: () {
+                      settings.changeColor();
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Align(
+          alignment: Alignment.topRight,
+          child: Consumer<MySetting>(builder: (context, settings, child) {
+            print("rebuild nho");
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<CounterProvider>().decrement();
-                  },
-                  child: const Text("Decrement"),
+                Text(
+                  settings.text,
+                  style: TextStyle(color: settings.color),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<CounterProvider>().increment();
+                    settings.text = "Hello";
                   },
-                  child: const Text("Increment"),
+                  child: Text(
+                    "Change text",
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    settings.changeColor();
+                  },
+                  child: Text(
+                    "Change color",
+                  ),
                 ),
               ],
-            ),
-            SizedBox(
-              height: 80,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SecondPage(),
-                    ));
-              },
-              child: Text("Go to second page"),
-            ),
-          ],
+            );
+          }),
         ),
       ),
     );
